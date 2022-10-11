@@ -6,6 +6,8 @@ public class PlayerMain : MonoBehaviour
     private GameObject _MainCamera;
     private Transform _Cam;
 
+    private Transform _Children;
+
     // The target marker.
     public Transform target;
 
@@ -25,6 +27,7 @@ public class PlayerMain : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        transform.position = new Vector3(transform.position.x, 2f, transform.position.z);
         if (Input.GetKey(KeyCode.Mouse1))
         {
             _target = new Vector3(movement.a.x, 2.0f, movement.a.z);

@@ -3,18 +3,20 @@
 public class BulletScript : BulletStats
 {
     private Rigidbody _RB;
-    private bool _Start = true;
+    private int _Timer = 0;
+    public bool Ready = false;
+
     // Start is called before the first frame update
     void Start()
     {
-        _RB = GetComponentInChildren<Rigidbody>();       
+        _RB = GetComponentInChildren<Rigidbody>();
+        InvokeRepeating("TimerOfDestruction",1f,1f);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
-        
+       
     }
 
     private void FixedUpdate()
@@ -24,15 +26,31 @@ public class BulletScript : BulletStats
 
     void rotTo()
     {
-        Vector3 _tAR = new Vector3(_EnemyTarget.x, 1f, _EnemyTarget.z);
+        Vector3 _tAR = new Vector3(_EnemyTarget.x, 1.5f, _EnemyTarget.z);
         Vector3 targetDirection = _tAR - transform.parent.position;
         Quaternion rott = Quaternion.LookRotation(targetDirection);
         Quaternion rottt = new Quaternion(0, rott.y, rott.z, rott.w);
         transform.parent.rotation = Quaternion.Slerp(transform.parent.rotation, rottt, 50f * Time.deltaTime);
-        if(transform.parent.rotation == rottt && _Start)
+        _RB.velocity = transform.forward * Speed;       
+    }
+
+
+    void TimerOfDestruction()
+    {
+        _Timer++;
+        if(_Timer == 7)
         {
-            _RB.velocity = transform.forward * Speed;
-            _Start = false;
+            CancelInvoke("TimerOfDestruction");
+            Destroy(gameObject);          
+        }
+    }
+
+    //Я знаю что частое обращение к компанентам вредит производительности!
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.CompareTag("Ship"))
+        {
+            Ready = true;
         }
     }
 }

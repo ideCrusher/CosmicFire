@@ -1,5 +1,18 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!65 &8794162137702121892
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8559735470305705162}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 10.808838, y: 5.8996406, z: 7.0751095}
+  m_Center: {x: 0.93567586, y: -0.019506693, z: -2.5375547}
 --- !u!1 &8794162136648608932
 GameObject:
   m_ObjectHideFlags: 0
@@ -11,9 +24,10 @@ GameObject:
   - component: {fileID: 8794162136648608931}
   - component: {fileID: 8794162136648608934}
   - component: {fileID: 8794162136648608935}
+  - component: {fileID: 113588850}
   m_Layer: 0
   m_Name: StarShipEnemy
-  m_TagString: Untagged
+  m_TagString: Ship
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -45,9 +59,9 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: 0
   m_UseGravity: 0
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 4
   m_CollisionDetection: 0
 --- !u!114 &8794162136648608935
 MonoBehaviour:
@@ -61,20 +75,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37f73c7ed6bbd7c4c92cfa4c296b2380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _ShipTarget: {x: 0, y: 0, z: 0}
---- !u!65 &8794162137702121892
-BoxCollider:
+--- !u!114 &113588850
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8559735470305705162}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_GameObject: {fileID: 8794162136648608932}
   m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 10.808838, y: 5.8996406, z: 7.0751095}
-  m_Center: {x: 0.93567586, y: -0.019506693, z: -2.5375547}
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85629c60bf8707f4c99efad807f21d50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Tier: 0
+  Faction: 1V
+  Target: {x: 0, y: 0, z: 0}
+  HealsPoint: 100
+  Armor: 0
+  Speed: 3
+  RadiusForLook: 0
+  RadiusForShooting: 0
+  GunList: []
+  HangarList: []
+  isBot: 1
 --- !u!1001 &8794162137702121883
 PrefabInstance:
   m_ObjectHideFlags: 0

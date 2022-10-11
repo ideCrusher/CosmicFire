@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 188513126710353217}
   m_Layer: 0
   m_Name: Bull1
-  m_TagString: Untagged
+  m_TagString: Bullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -106,7 +106,7 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1445042929815237412}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 1.004312
   m_Height: 2.8200905
@@ -128,6 +128,8 @@ MonoBehaviour:
   HealsPoint: 1
   Damage: 3
   Speed: 5
+  Faction: 
+  Ready: 0
 --- !u!1 &9146057393997743515
 GameObject:
   m_ObjectHideFlags: 0

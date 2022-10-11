@@ -8,4 +8,5 @@ public class RocketStats : MonoBehaviour
     public int HealsPoint;
     public int Damage;
     public float Speed;
+    public string Faction;
 }

@@ -14,14 +14,14 @@ public class movement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-              
-    }
-
-    private void FixedUpdate()
-    {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit Po = new RaycastHit();
         if (Physics.Raycast(ray, out Po))
             a = new Vector3(Po.point.x, Po.point.y, Po.point.z);
+    }
+
+    private void FixedUpdate()
+    {
+        
     }
 }

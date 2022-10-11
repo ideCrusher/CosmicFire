@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Rocket
   - Ship
+  - Bullet
   layers:
   - Default
   - TransparentFX
