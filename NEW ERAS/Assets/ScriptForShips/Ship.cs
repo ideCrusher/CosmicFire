@@ -8,6 +8,7 @@ public class Ship : MonoBehaviour
 
     public string Faction;
 
+    public GameObject EnemyTarget;
     public Vector3 Target;
 
     public int HealsPoint;

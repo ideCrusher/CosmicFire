@@ -89,6 +89,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Tier: 0
   Faction: 1V
+  EnemyTarget: {fileID: 0}
   Target: {x: 0, y: 0, z: 0}
   HealsPoint: 100
   Armor: 0
@@ -97,6 +98,8 @@ MonoBehaviour:
   RadiusForShooting: 0
   GunList: []
   HangarList: []
+  target: {fileID: 0}
+  speed: 1
   isBot: 1
 --- !u!1001 &8794162137702121883
 PrefabInstance:

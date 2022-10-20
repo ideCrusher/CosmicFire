@@ -3,6 +3,24 @@ using UnityEngine.UI;
 
 public class ShipStats : Ship
 {
+    //// MOVMETY FOR BOTS
+    private bool _Move = false;
+
+    private Transform _Children;
+
+    // The target marker.
+    public Transform target;
+
+    // Angular speed in radians per sec.
+    public float speed = 1.0f;
+    public Vector3 _target;
+
+    //// FIND ON ENEMY
+    Collider[] _EnemyShipsLocator;
+    Collider[] _EnemyShipsForShooting;
+
+
+    //// OTHER
     public bool isBot = false;
 
     private GameObject _MainCamera;
@@ -28,26 +46,63 @@ public class ShipStats : Ship
             _ReloadingMachingun = GameObject.Find("MachingunCooldown").GetComponent<Text>();
             _MainCamera = GameObject.FindGameObjectWithTag("MainCamera");
         }      
+        if(isBot)
+        {
+            InvokeRepeating("Locator", 1f, 1f);
+            
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(HealsPoint < 0)
-        {
-            Destroy(gameObject);
-        }
 
-
-        if (Input.GetKeyDown(KeyCode.E) && _FireFirstSlot && !isBot)
+        if(!isBot)
         {
-            _FireFirstSlot = false;
-            InvokeRepeating("ShootingMachingun", 0, 0.3f);
+            if (HealsPoint < 0)
+            {
+                Destroy(gameObject);
+            }
+            if (Input.GetKeyDown(KeyCode.E) && _FireFirstSlot)
+            {
+                _FireFirstSlot = false;
+                InvokeRepeating("ShootingMachingun", 0, 0.3f);
+            }
+            if (Input.GetKeyDown(KeyCode.R) && Target != null && _FireSecondSlot)
+            {
+                _FireSecondSlot = false;
+                InvokeRepeating("ShootingRocketLuncher", 0, 1.0f);
+            }
         }
-        if (Input.GetKeyDown(KeyCode.R) && Target != null && _FireSecondSlot && !isBot)
+        
+        if(isBot)
         {
-            _FireSecondSlot = false;
-            InvokeRepeating("ShootingRocketLuncher", 0, 1.0f);
+            MoveTo();
+
+            if (_EnemyShipsLocator.Length != 0)
+            {              
+                foreach(var Enemy in _EnemyShipsLocator)
+                {
+                    if(Enemy.gameObject.CompareTag("Ship"))
+                    {
+                        if(Enemy.gameObject.GetComponentInParent<ShipStats>().Faction != Faction)
+                        {                           
+                                float New = (Enemy.gameObject.transform.parent.position - transform.position).sqrMagnitude, Old = (Target - transform.position).sqrMagnitude;
+                                if (New < Old)
+                                {
+
+                                    EnemyTarget = Enemy.gameObject;
+                                    print($"{Enemy.gameObject.name}");
+                                }                            
+                        }                     
+                    }                 
+                }
+            }
+            if (Target != null)
+            {
+                _target = Target;
+                _Move = true;
+            }
         }
     }
     private void FixedUpdate()
@@ -131,5 +186,28 @@ public class ShipStats : Ship
             CancelInvoke("ReloadingSecondSlot");
         }
         _ReloadingCounterTwo = _ReloadingCounterTwo + 1;
+    }
+
+
+    void MoveTo()
+    {
+        transform.position = Vector3.MoveTowards(transform.position, _target, 3f * Time.deltaTime);
+        rotTo();
+    }
+
+    void rotTo()
+    {
+        Vector3 targetDirection = _target - transform.position;
+        Quaternion rott = Quaternion.LookRotation(targetDirection);
+        // Rotate the cube by converting the angles into a quaternion.
+        transform.rotation = Quaternion.Slerp(transform.rotation, new Quaternion(0, rott.y, rott.z, rott.w), 3f * Time.deltaTime);
+    }
+
+
+
+    void Locator()
+    {
+        _EnemyShipsLocator = Physics.OverlapSphere(transform.position, RadiusForLook);
+        _EnemyShipsForShooting = Physics.OverlapSphere(transform.position, RadiusForShooting);
     }
 }
