@@ -4,7 +4,8 @@ using UnityEngine.UI;
 public class ShipStats : Ship
 {
     //// MOVMETY FOR BOTS
-    private bool _Move = false;
+    private bool _Move = false, _Shoot = false;
+
 
     private Transform _Children;
 
@@ -16,8 +17,9 @@ public class ShipStats : Ship
     public Vector3 _target;
 
     //// FIND ON ENEMY
-    Collider[] _EnemyShipsLocator;
-    Collider[] _EnemyShipsForShooting;
+    private bool StarterLocator = false;
+    private Collider[] _EnemyShipsLocator;
+    private Collider[] _EnemyShipsForShooting;
 
 
     //// OTHER
@@ -48,8 +50,8 @@ public class ShipStats : Ship
         }      
         if(isBot)
         {
-            InvokeRepeating("Locator", 1f, 1f);
-            
+            EnemyTarget = new Vector3(100,100,100);
+            InvokeRepeating("Locator", 1f, 1f);           
         }
     }
 
@@ -76,38 +78,53 @@ public class ShipStats : Ship
         }
         
         if(isBot)
-        {
-            MoveTo();
-
-            if (_EnemyShipsLocator.Length != 0)
-            {              
-                foreach(var Enemy in _EnemyShipsLocator)
-                {
-                    if(Enemy.gameObject.CompareTag("Ship"))
-                    {
-                        if(Enemy.gameObject.GetComponentInParent<ShipStats>().Faction != Faction)
-                        {                           
-                                float New = (Enemy.gameObject.transform.parent.position - transform.position).sqrMagnitude, Old = (Target - transform.position).sqrMagnitude;
-                                if (New < Old)
-                                {
-
-                                    EnemyTarget = Enemy.gameObject;
-                                    print($"{Enemy.gameObject.name}");
-                                }                            
-                        }                     
-                    }                 
-                }
-            }
-            if (Target != null)
+        {          
+            if(StarterLocator)
             {
-                _target = Target;
-                _Move = true;
-            }
+                if (_EnemyShipsLocator.Length > 0)
+                {
+                    foreach (var Enemy in _EnemyShipsLocator)
+                    {
+                        if (Enemy.gameObject.CompareTag("Ship"))
+                        {
+                            if(Enemy.gameObject.GetComponentInParent<ShipStats>().Faction != Faction)
+                            {                           
+                                float New = (Enemy.gameObject.transform.parent.position - transform.position).sqrMagnitude, Old = (EnemyTarget - transform.position).sqrMagnitude;
+                                print($"{New} and {Old}");
+                                if (New < Old && !_Move && !_Shoot)
+                                {
+                                    
+                                    Target = Enemy.gameObject;
+                                    _Move = true;
+                                }
+                            }                     
+                        }
+                    }
+                }               
+            }          
         }
     }
     private void FixedUpdate()
     {
         Pos = transform;
+        if (isBot)
+        {
+            if (_Move && !_Shoot)
+            {
+                _target = Target.transform.position;
+                MoveTo();
+            }
+            if (!_Shoot && GunList.Count > 0 && (Target.transform.position - transform.position).sqrMagnitude <= RadiusForShooting)
+            {
+                _Shoot = true;
+                _Move = false;
+            }
+            else if((Target.transform.position - transform.position).sqrMagnitude > RadiusForShooting && (Target.transform.position - transform.position).sqrMagnitude <= RadiusForLook)
+            {
+                _Shoot = false;
+                _Move = true;
+            }
+        }
     }
 
     void OnTriggerEnter(Collider other)
@@ -153,8 +170,8 @@ public class ShipStats : Ship
     {
         _ProjectileCounterTwo++;
         Rocket = Instantiate(GunList[1].Prefab, new Vector3(Pos.position.x, 1f, Pos.position.z), Pos.rotation);
-        Rocket.GetComponentInChildren<Rocket>(true)._EnemyTarget = Target;
-        Rocket.GetComponentInChildren<Rocket>(true).Faction = Faction;
+        Rocket.GetComponentInChildren<Rocket>().EnemyTarget = Target;
+        Rocket.GetComponentInChildren<Rocket>().Faction = Faction;
         if (_ProjectileCounterTwo == GunList[1].ProjectileForOneShot)
         {
             _ProjectileCounterTwo = 0;
@@ -207,7 +224,12 @@ public class ShipStats : Ship
 
     void Locator()
     {
+
         _EnemyShipsLocator = Physics.OverlapSphere(transform.position, RadiusForLook);
         _EnemyShipsForShooting = Physics.OverlapSphere(transform.position, RadiusForShooting);
+        if(!StarterLocator)
+        {
+            StarterLocator = true;
+        }
     }
 }

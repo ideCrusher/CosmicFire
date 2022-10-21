@@ -12,7 +12,7 @@ public class PlayerMain : MonoBehaviour
     public Transform target;
 
     // Angular speed in radians per sec.
-    public float speed = 1.0f;
+    public float speed = 10f;
     private Vector3 _target;   
 
 
@@ -57,6 +57,6 @@ public class PlayerMain : MonoBehaviour
         Vector3 targetDirection = _target - transform.position;       
         Quaternion rott = Quaternion.LookRotation(targetDirection);
         // Rotate the cube by converting the angles into a quaternion.
-        transform.rotation = Quaternion.Slerp(transform.rotation, new Quaternion(0, rott.y, rott.z, rott.w), 3f * Time.deltaTime);       
+        transform.rotation = Quaternion.Slerp(transform.rotation, new Quaternion(0, rott.y, rott.z, rott.w), 10f * Time.deltaTime);       
     }
 }
