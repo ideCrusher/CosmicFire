@@ -61,7 +61,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  speed: 1
+  speed: 5
 --- !u!114 &3326932641745630600
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -76,10 +76,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Tier: 2
   Faction: F2
-  Target: {x: 0, y: 0, z: 0}
+  EnemyTarget: {x: 0, y: 0, z: 0}
+  Target: {fileID: 0}
   HealsPoint: 500
   Armor: 25
-  Speed: 1
+  Speed: 10
   RadiusForLook: 15
   RadiusForShooting: 5
   GunList:
@@ -106,6 +107,12 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  Patrol: 0
+  _PositionRotateOne: {x: 0, y: 0, z: 0}
+  _PositionRotateTwo: {x: 0, y: 0, z: 0}
+  target: {fileID: 0}
+  speed: 10
+  _target: {x: 0, y: 0, z: 0}
   isBot: 0
 --- !u!54 &3326932641745630601
 Rigidbody:

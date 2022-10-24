@@ -43,7 +43,7 @@ public class PlayerMain : MonoBehaviour
 
     void MoveTo()
     {                 
-        transform.position = Vector3.MoveTowards(transform.position, _target, 3f * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, _target, 10f * Time.deltaTime);
         _Cam.position = new Vector3(transform.position.x, 8, transform.position.z - 5f);
         rotTo();
         if (transform.position == _target)
@@ -57,6 +57,6 @@ public class PlayerMain : MonoBehaviour
         Vector3 targetDirection = _target - transform.position;       
         Quaternion rott = Quaternion.LookRotation(targetDirection);
         // Rotate the cube by converting the angles into a quaternion.
-        transform.rotation = Quaternion.Slerp(transform.rotation, new Quaternion(0, rott.y, rott.z, rott.w), 10f * Time.deltaTime);       
+        transform.rotation = Quaternion.Slerp(transform.rotation, new Quaternion(0, rott.y, rott.z, rott.w), 3f * Time.deltaTime);       
     }
 }

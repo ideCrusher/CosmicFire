@@ -89,17 +89,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Tier: 0
   Faction: 1V
-  EnemyTarget: {fileID: 0}
-  Target: {x: 0, y: 0, z: 0}
+  EnemyTarget: {x: 0, y: 0, z: 0}
+  Target: {fileID: 0}
   HealsPoint: 100
   Armor: 0
   Speed: 3
-  RadiusForLook: 0
-  RadiusForShooting: 0
-  GunList: []
+  RadiusForLook: 80
+  RadiusForShooting: 50
+  GunList:
+  - {fileID: 0}
   HangarList: []
+  Patrol: 0
+  _PositionRotateOne: {x: 0, y: 0, z: 0}
+  _PositionRotateTwo: {x: 0, y: 0, z: 0}
   target: {fileID: 0}
-  speed: 1
+  speed: 3
+  _target: {x: 65, y: 2, z: 30}
   isBot: 1
 --- !u!1001 &8794162137702121883
 PrefabInstance:

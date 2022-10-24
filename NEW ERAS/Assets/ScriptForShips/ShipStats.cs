@@ -3,10 +3,16 @@ using UnityEngine.UI;
 
 public class ShipStats : Ship
 {
-    //// MOVMETY FOR BOTS
-    private bool _Move = false, _Shoot = false;
+    //// MOVEMETY FOR BOTS
+    private bool _Target = false, _Move = false, _Shoot = false;
+    private Vector3 _StayPoint;
+    private GameObject Empty;
 
+    //// Patrol movement bots   
+    public bool Patrol = false;
+    public Vector3 _PositionRotateOne, _PositionRotateTwo;
 
+        
     private Transform _Children;
 
     // The target marker.
@@ -50,6 +56,10 @@ public class ShipStats : Ship
         }      
         if(isBot)
         {
+            _StayPoint = transform.position;
+            Empty = new GameObject();
+            Target = Empty;
+            TargetForShooting = Empty;
             EnemyTarget = new Vector3(100,100,100);
             InvokeRepeating("Locator", 1f, 1f);           
         }
@@ -75,32 +85,46 @@ public class ShipStats : Ship
                 _FireSecondSlot = false;
                 InvokeRepeating("ShootingRocketLuncher", 0, 1.0f);
             }
-        }
-        
+        }      
         if(isBot)
         {          
             if(StarterLocator)
             {
-                if (_EnemyShipsLocator.Length > 0)
+                foreach (var Enemy in _EnemyShipsLocator)
                 {
-                    foreach (var Enemy in _EnemyShipsLocator)
-                    {
-                        if (Enemy.gameObject.CompareTag("Ship"))
+                    if (Enemy.gameObject.CompareTag("Ship"))
+                    {                     
+                        if (Enemy.gameObject.GetComponentInParent<ShipStats>().Faction != Faction)
                         {
-                            if(Enemy.gameObject.GetComponentInParent<ShipStats>().Faction != Faction)
-                            {                           
-                                float New = (Enemy.gameObject.transform.parent.position - transform.position).sqrMagnitude, Old = (EnemyTarget - transform.position).sqrMagnitude;
-                                print($"{New} and {Old}");
-                                if (New < Old && !_Move && !_Shoot)
-                                {
-                                    
-                                    Target = Enemy.gameObject;
-                                    _Move = true;
-                                }
-                            }                     
-                        }
+                            float New = (Enemy.gameObject.transform.parent.position - transform.position).sqrMagnitude, Old = (EnemyTarget - transform.position).sqrMagnitude;
+                            print($"Distance for Enemy: {New}");
+                            if (New < Old)
+                            {
+                                _Target = true;
+                                Target = Enemy.gameObject;
+                                _Move = true;
+                            }
+                        }                       
                     }
-                }               
+                    else
+                    {                       
+                        Target = Empty;
+                        _Target = false;
+                        _Move = false;
+                        _target = _StayPoint;                      
+                    }
+                }
+                foreach(var EnemyShoot in _EnemyShipsForShooting)
+                {
+                    if(EnemyShoot.gameObject == Target)
+                    {
+                        _Shoot = true;
+                    }
+                    else
+                    {
+                        _Shoot = false;
+                    }
+                }
             }          
         }
     }
@@ -109,20 +133,22 @@ public class ShipStats : Ship
         Pos = transform;
         if (isBot)
         {
-            if (_Move && !_Shoot)
+            if (_Move && !_Shoot && !_Target)
             {
-                _target = Target.transform.position;
+                if(Target != Empty)
+                {
+                    _target = Target.transform.position;
+                }
                 MoveTo();
             }
-            if (!_Shoot && GunList.Count > 0 && (Target.transform.position - transform.position).sqrMagnitude <= RadiusForShooting)
+            if(_Move && _Shoot && _Target)
             {
-                _Shoot = true;
+                print("СТОЙ СУКА!!!");
                 _Move = false;
             }
-            else if((Target.transform.position - transform.position).sqrMagnitude > RadiusForShooting && (Target.transform.position - transform.position).sqrMagnitude <= RadiusForLook)
+            if (Target == Empty)
             {
-                _Shoot = false;
-                _Move = true;
+                MoveTo();
             }
         }
     }
@@ -232,4 +258,13 @@ public class ShipStats : Ship
             StarterLocator = true;
         }
     }
+    //void OnDrawGizmosSelected()
+    //{
+    //    // Draw a yellow sphere at the transform's position
+    //    Gizmos.color = Color.yellow;
+    //    Gizmos.DrawSphere(transform.position, RadiusForLook);
+    //
+    //    Gizmos.color = Color.red;
+    //    Gizmos.DrawSphere(transform.position, RadiusForShooting);
+    //}
 }

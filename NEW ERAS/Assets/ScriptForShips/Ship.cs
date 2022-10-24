@@ -10,6 +10,7 @@ public class Ship : MonoBehaviour
 
     public Vector3 EnemyTarget;
     public GameObject Target;
+    public GameObject TargetForShooting;
 
     public int HealsPoint;
     public int Armor;
