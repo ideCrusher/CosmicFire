@@ -74,6 +74,7 @@ public class ShipStats : Ship
             if (HealsPoint < 0)
             {
                 Destroy(gameObject);
+                
             }
             if (Input.GetKeyDown(KeyCode.E) && _FireFirstSlot)
             {
@@ -87,42 +88,62 @@ public class ShipStats : Ship
             }
         }      
         if(isBot)
-        {          
-            if(StarterLocator)
+        {
+            if (HealsPoint < 0)
+            {
+                Destroy(gameObject);
+            }
+            if (StarterLocator)
             {
                 foreach (var Enemy in _EnemyShipsLocator)
                 {
-                    if (Enemy.gameObject.CompareTag("Ship"))
-                    {                     
-                        if (Enemy.gameObject.GetComponentInParent<ShipStats>().Faction != Faction)
+                    if(Enemy != null)
+                    {
+                        if (Enemy.gameObject.CompareTag("Ship"))
                         {
-                            float New = (Enemy.gameObject.transform.parent.position - transform.position).sqrMagnitude, Old = (EnemyTarget - transform.position).sqrMagnitude;
-                            print($"Distance for Enemy: {New}");
-                            if (New < Old)
+                            if (Enemy.gameObject.GetComponentInParent<ShipStats>().Faction != Faction)
                             {
-                                _Target = true;
-                                Target = Enemy.gameObject;
-                                _Move = true;
+                                float New = (Enemy.gameObject.transform.parent.position - transform.position).sqrMagnitude, Old = (EnemyTarget - transform.position).sqrMagnitude;
+                                if (New < Old)
+                                {
+                                    _Target = true;
+                                    Target = Enemy.gameObject;
+                                    _Move = true;
+                                }
                             }
-                        }                       
-                    }
-                    else
-                    {                       
-                        Target = Empty;
-                        _Target = false;
-                        _Move = false;
-                        _target = _StayPoint;                      
-                    }
+                        }
+                        else if(Enemy.gameObject.CompareTag("Untagged"))
+                        {
+                            Target = Empty;
+                            _Target = false;
+                            _Move = false;
+                            _Shoot = false;
+                            _target = _StayPoint;
+                        }
+                    }                   
                 }
                 foreach(var EnemyShoot in _EnemyShipsForShooting)
                 {
-                    if(EnemyShoot.gameObject == Target)
+                    if (EnemyShoot != null)
                     {
-                        _Shoot = true;
-                    }
-                    else
-                    {
-                        _Shoot = false;
+                        if (EnemyShoot.gameObject.CompareTag("Ship"))
+                        {
+                            if (EnemyShoot.gameObject.GetComponentInParent<ShipStats>().Faction != Faction)
+                            {
+                                if (EnemyShoot.gameObject == Target)
+                                {
+                                    _Shoot = true;
+                                    _Move = false;
+                                    print($"Yes");
+                                }
+                                else
+                                {
+                                    _Shoot = false;
+                                    _Move = true;
+                                    print($"No");
+                                }
+                            }
+                        }
                     }
                 }
             }          
@@ -133,18 +154,31 @@ public class ShipStats : Ship
         Pos = transform;
         if (isBot)
         {
-            if (_Move && !_Shoot && !_Target)
+            if (_Move)
             {
                 if(Target != Empty)
                 {
                     _target = Target.transform.position;
                 }
+                _Shoot = false;
                 MoveTo();
             }
-            if(_Move && _Shoot && _Target)
+            
+            if(_Shoot && GunList.Count > 0)
             {
-                print("СТОЙ СУКА!!!");
-                _Move = false;
+                foreach(var Gun in GunList)
+                {
+                    if(Gun.name == "MachinGun" && _FireFirstSlot)
+                    {
+                        _FireFirstSlot = false;
+                        InvokeRepeating("ShootingMachingun", 0, 0.3f);
+                    }
+                    if (Gun.name == "RocketLuncher" && _FireSecondSlot)
+                    {
+                        _FireSecondSlot = false;
+                        InvokeRepeating("ShootingRocketLuncher", 0, 1.0f);
+                    }
+                }
             }
             if (Target == Empty)
             {
@@ -179,9 +213,18 @@ public class ShipStats : Ship
 
     void ShootingMachingun()
     {
+        Vector3 Targeto = new Vector3();
+        if(isBot)
+        {
+            Targeto = Target.transform.position;
+        }
+        else
+        {
+            Targeto = movement.a;
+        }
         _ProjectileCounterOne++;
         Bullet = Instantiate(GunList[0].Prefab, new Vector3(Pos.position.x, 1.5f, Pos.position.z), Pos.rotation);
-        Bullet.GetComponentInChildren<BulletScript>(true)._EnemyTarget = movement.a;
+        Bullet.GetComponentInChildren<BulletScript>(true)._EnemyTarget = Targeto;
         Bullet.GetComponentInChildren<BulletScript>(true).Faction = Faction;
         if (_ProjectileCounterOne == GunList[0].ProjectileForOneShot)
         {           
@@ -208,24 +251,38 @@ public class ShipStats : Ship
 
     void ReloadingFirstSlot()
     {
-        _ReloadingMachingun.text = (GunList[0].Cooldown - _ReloadingCounterOne).ToString();
+        if(!isBot)
+        {
+            _ReloadingMachingun.text = (GunList[0].Cooldown - _ReloadingCounterOne).ToString();
+
+        }
         if (_ReloadingCounterOne == GunList[0].Cooldown)
         {
             _FireFirstSlot = true;
             _ReloadingCounterOne = 0;
-            _ReloadingMachingun.text = "Ready";
+            if (!isBot)
+            {
+                _ReloadingMachingun.text = "Ready";
+            }
             CancelInvoke("ReloadingFirstSlot");
         }
         _ReloadingCounterOne = _ReloadingCounterOne + 1;
     }
     void ReloadingSecondSlot()
     {
-        _ReloadingRocket.text = (GunList[1].Cooldown - _ReloadingCounterTwo).ToString();       
+        if (!isBot)
+        {
+            _ReloadingRocket.text = (GunList[1].Cooldown - _ReloadingCounterTwo).ToString();
+        }
+     
         if (_ReloadingCounterTwo == GunList[1].Cooldown)
         {
             _FireSecondSlot = true;
             _ReloadingCounterTwo = 0;
-            _ReloadingRocket.text = "Ready";
+            if (!isBot)
+            {
+                _ReloadingRocket.text = "Ready";
+            }
             CancelInvoke("ReloadingSecondSlot");
         }
         _ReloadingCounterTwo = _ReloadingCounterTwo + 1;

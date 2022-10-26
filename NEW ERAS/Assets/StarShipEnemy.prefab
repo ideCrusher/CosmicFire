@@ -91,13 +91,14 @@ MonoBehaviour:
   Faction: 1V
   EnemyTarget: {x: 0, y: 0, z: 0}
   Target: {fileID: 0}
-  HealsPoint: 100
+  TargetForShooting: {fileID: 0}
+  HealsPoint: 5000
   Armor: 0
   Speed: 3
-  RadiusForLook: 80
-  RadiusForShooting: 50
+  RadiusForLook: 20
+  RadiusForShooting: 10
   GunList:
-  - {fileID: 0}
+  - {fileID: 1831106006466570998, guid: 417a0ad799fb8ad40ac384f651dc65a2, type: 3}
   HangarList: []
   Patrol: 0
   _PositionRotateOne: {x: 0, y: 0, z: 0}

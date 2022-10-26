@@ -78,11 +78,12 @@ MonoBehaviour:
   Faction: F2
   EnemyTarget: {x: 0, y: 0, z: 0}
   Target: {fileID: 0}
+  TargetForShooting: {fileID: 0}
   HealsPoint: 500
   Armor: 25
   Speed: 10
-  RadiusForLook: 15
-  RadiusForShooting: 5
+  RadiusForLook: 20
+  RadiusForShooting: 10
   GunList:
   - {fileID: 1831106006466570998, guid: 417a0ad799fb8ad40ac384f651dc65a2, type: 3}
   - {fileID: 6399924983425323759, guid: eb9da98b33285cf4b95d4d5f02467f60, type: 3}

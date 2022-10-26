@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641258, b: 0.5748172, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -398,14 +398,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 113588850, guid: f4072276f22928f478f29127fed91970, type: 3}
-      propertyPath: RadiusForLook
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 113588850, guid: f4072276f22928f478f29127fed91970, type: 3}
-      propertyPath: RadiusForShooting
-      value: 10
-      objectReference: {fileID: 0}
     - target: {fileID: 8794162136648608931, guid: f4072276f22928f478f29127fed91970,
         type: 3}
       propertyPath: m_RootOrder
@@ -475,16 +467,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 3326932641745630600, guid: 6597bb553d07a9046b76f179e1deb82d,
-        type: 3}
-      propertyPath: RadiusForLook
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 3326932641745630600, guid: 6597bb553d07a9046b76f179e1deb82d,
-        type: 3}
-      propertyPath: RadiusForShooting
-      value: 10
-      objectReference: {fileID: 0}
     - target: {fileID: 3326932641745630603, guid: 6597bb553d07a9046b76f179e1deb82d,
         type: 3}
       propertyPath: m_RootOrder
