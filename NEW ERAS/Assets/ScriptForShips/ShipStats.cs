@@ -12,7 +12,13 @@ public class ShipStats : Ship
     public bool Patrol = false;
     public Vector3 _PositionRotateOne, _PositionRotateTwo;
 
-        
+    //// Finding Path
+    private GameObject _BlockTarget;
+    private bool _BlockTargetActiv = false;
+
+
+
+
     private Transform _Children;
 
     // The target marker.
@@ -48,6 +54,7 @@ public class ShipStats : Ship
     // Start is called before the first frame update
     void Start()
     {      
+        
         if(!isBot)
         {
             _ReloadingRocket = GameObject.Find("RocketCooldown").GetComponent<Text>();
@@ -93,99 +100,22 @@ public class ShipStats : Ship
             {
                 Destroy(gameObject);
             }
-            if (StarterLocator)
-            {
-                foreach (var Enemy in _EnemyShipsLocator)
-                {
-                    if(Enemy != null)
-                    {
-                        if (Enemy.gameObject.CompareTag("Ship"))
-                        {
-                            if (Enemy.gameObject.GetComponentInParent<ShipStats>().Faction != Faction)
-                            {
-                                float New = (Enemy.gameObject.transform.parent.position - transform.position).sqrMagnitude, Old = (EnemyTarget - transform.position).sqrMagnitude;
-                                if (New < Old)
-                                {
-                                    _Target = true;
-                                    Target = Enemy.gameObject;
-                                    _Move = true;
-                                }
-                            }
-                        }
-                        else if(Enemy.gameObject.CompareTag("Untagged"))
-                        {
-                            Target = Empty;
-                            _Target = false;
-                            _Move = false;
-                            _Shoot = false;
-                            _target = _StayPoint;
-                        }
-                    }                   
-                }
-                foreach(var EnemyShoot in _EnemyShipsForShooting)
-                {
-                    if (EnemyShoot != null)
-                    {
-                        if (EnemyShoot.gameObject.CompareTag("Ship"))
-                        {
-                            if (EnemyShoot.gameObject.GetComponentInParent<ShipStats>().Faction != Faction)
-                            {
-                                if (EnemyShoot.gameObject == Target)
-                                {
-                                    _Shoot = true;
-                                    _Move = false;
-                                    print($"Yes");
-                                }
-                                else
-                                {
-                                    _Shoot = false;
-                                    _Move = true;
-                                    print($"No");
-                                }
-                            }
-                        }
-                    }
-                }
-            }          
+            LocatorPlay();            
         }
+        Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * 20, Color.yellow);
     }
     private void FixedUpdate()
     {
         Pos = transform;
         if (isBot)
         {
-            if (_Move)
-            {
-                if(Target != Empty)
-                {
-                    _target = Target.transform.position;
-                }
-                _Shoot = false;
-                MoveTo();
-            }
-            
-            if(_Shoot && GunList.Count > 0)
-            {
-                foreach(var Gun in GunList)
-                {
-                    if(Gun.name == "MachinGun" && _FireFirstSlot)
-                    {
-                        _FireFirstSlot = false;
-                        InvokeRepeating("ShootingMachingun", 0, 0.3f);
-                    }
-                    if (Gun.name == "RocketLuncher" && _FireSecondSlot)
-                    {
-                        _FireSecondSlot = false;
-                        InvokeRepeating("ShootingRocketLuncher", 0, 1.0f);
-                    }
-                }
-            }
-            if (Target == Empty)
-            {
-                MoveTo();
-            }
+            MovementBots();
+
+            ShootingBots();
         }
     }
+
+    
 
     void OnTriggerEnter(Collider other)
     {
@@ -211,6 +141,7 @@ public class ShipStats : Ship
         }
     }
 
+    //// Shooting---------------------------------
     void ShootingMachingun()
     {
         Vector3 Targeto = new Vector3();
@@ -288,10 +219,10 @@ public class ShipStats : Ship
         _ReloadingCounterTwo = _ReloadingCounterTwo + 1;
     }
 
-
+    //// Move-----------------------------------------
     void MoveTo()
     {
-        transform.position = Vector3.MoveTowards(transform.position, _target, 3f * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, _target, speed * Time.deltaTime);
         rotTo();
     }
 
@@ -300,14 +231,13 @@ public class ShipStats : Ship
         Vector3 targetDirection = _target - transform.position;
         Quaternion rott = Quaternion.LookRotation(targetDirection);
         // Rotate the cube by converting the angles into a quaternion.
-        transform.rotation = Quaternion.Slerp(transform.rotation, new Quaternion(0, rott.y, rott.z, rott.w), 3f * Time.deltaTime);
+        transform.rotation = Quaternion.Slerp(transform.rotation, new Quaternion(0, rott.y, rott.z, rott.w), speed * Time.deltaTime);
     }
 
 
-
+    //// Locator---------------------------------------
     void Locator()
     {
-
         _EnemyShipsLocator = Physics.OverlapSphere(transform.position, RadiusForLook);
         _EnemyShipsForShooting = Physics.OverlapSphere(transform.position, RadiusForShooting);
         if(!StarterLocator)
@@ -315,6 +245,107 @@ public class ShipStats : Ship
             StarterLocator = true;
         }
     }
+    void LocatorPlay()
+    {
+        if (StarterLocator)
+        {
+            foreach (var Enemy in _EnemyShipsLocator)
+            {
+                if (Enemy != null)
+                {
+                    if (Enemy.gameObject.CompareTag("Ship"))
+                    {
+                        if (Enemy.gameObject.GetComponentInParent<ShipStats>().Faction != Faction)
+                        {
+                            float New = (Enemy.gameObject.transform.parent.position - transform.position).sqrMagnitude, Old = (EnemyTarget - transform.position).sqrMagnitude;
+                            if (New < Old)
+                            {
+                                _Target = true;
+                                Target = Enemy.gameObject;
+                                _Move = true;
+                            }
+                        }
+                    }
+                    else if (!Enemy.gameObject.CompareTag("Ship") && !_Target)
+                    {
+                        Target = Empty;
+                        _Target = false;
+                        _Move = false;
+                        _Shoot = false;
+                        _target = _StayPoint;
+                    }
+                    else if(!Enemy.gameObject.CompareTag("Ship") && _Target)
+                    {
+
+                    }                  
+                }
+            }
+            foreach (var EnemyShoot in _EnemyShipsForShooting)
+            {
+                if (EnemyShoot != null)
+                {
+                    if (EnemyShoot.gameObject.CompareTag("Ship"))
+                    {
+                        if (EnemyShoot.gameObject.GetComponentInParent<ShipStats>().Faction != Faction)
+                        {
+                            if (EnemyShoot.gameObject == Target)
+                            {
+                                _Shoot = true;
+                                _Move = false;
+                                print($"Yes");
+                            }
+                            else
+                            {
+                                _Shoot = false;
+                                _Move = true;
+                                print($"No");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    void MovementBots()
+    {
+        if (_Move)
+        {
+            if (Target != Empty)
+            {
+                _target = Target.transform.position;
+            }
+            _Shoot = false;
+            MoveTo();
+        }
+
+        if (Target == Empty)
+        {
+            MoveTo();
+        }
+    }
+
+    void ShootingBots()
+    {
+        if (_Shoot && GunList.Count > 0)
+        {
+            foreach (var Gun in GunList)
+            {
+                if (Gun.name == "MachinGun" && _FireFirstSlot)
+                {
+                    _FireFirstSlot = false;
+                    InvokeRepeating("ShootingMachingun", 0, 0.3f);
+                }
+                if (Gun.name == "RocketLuncher" && _FireSecondSlot)
+                {
+                    _FireSecondSlot = false;
+                    InvokeRepeating("ShootingRocketLuncher", 0, 1.0f);
+                }
+            }
+        }
+    }
+
     //void OnDrawGizmosSelected()
     //{
     //    // Draw a yellow sphere at the transform's position

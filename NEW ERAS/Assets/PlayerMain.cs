@@ -12,7 +12,7 @@ public class PlayerMain : MonoBehaviour
     public Transform target;
 
     // Angular speed in radians per sec.
-    public float speed = 10f;
+    public float speed = 3f;
     private Vector3 _target;   
 
 
@@ -21,7 +21,9 @@ public class PlayerMain : MonoBehaviour
     {
         _MainCamera = GameObject.FindGameObjectWithTag("MainCamera");
         _Cam = _MainCamera.GetComponent<Transform>();
-        _target = transform.position;        
+        _target = transform.position;
+        Rigidbody f = GetComponent<Rigidbody>();
+        f.freezeRotation = true;
     }
     void Update()
     {
@@ -43,7 +45,7 @@ public class PlayerMain : MonoBehaviour
 
     void MoveTo()
     {                 
-        transform.position = Vector3.MoveTowards(transform.position, _target, 10f * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, _target, speed * Time.deltaTime);
         _Cam.position = new Vector3(transform.position.x, 8, transform.position.z - 5f);
         rotTo();
         if (transform.position == _target)

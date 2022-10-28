@@ -140,7 +140,7 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4874388123167527912}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   m_Radius: 1.0305609
   m_Height: 9.041745
@@ -158,9 +158,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08f625dab166a154cba159075a52d6fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _EnemyTarget: {x: 0, y: 0, z: 0}
-  _EnemyTargetPosition: {x: 0, y: 0, z: 0}
-  _Move: 0
+  EnemyTarget: {fileID: 0}
+  EnemyTargetPosition: {x: 0, y: 0, z: 0}
+  Move: 0
   HealsPoint: 12
   Damage: 90
   Speed: 3
